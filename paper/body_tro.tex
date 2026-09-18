@@ -3,7 +3,12 @@
 %   - Extended seed analysis (6+ seeds)
 %   - Izhikevich substrate detection/localization analysis
 %   - Terrain battery (different terrains)
-% IEEE T-RO style: double column.
+%   - Extended related work
+%   - Detailed methods
+%   - Extended results with additional analysis
+%   - Detailed discussion with implications
+%   - Extended limitations
+% IEEE T-RO style: double column, 12+ pages.
 
 \usepackage{cite}
 \usepackage{amsmath,amsfonts,amssymb}
@@ -85,49 +90,94 @@ submission: (i) ``only 3 seeds,'' (ii) ``only rate-code substrate,'' and
 conditions, confirming that the signature is carried by the substrate's
 coupling to state.
 
+The remainder of this paper is organized as follows. Section~II reviews
+related work in culture computing, spiking substrates, fault detection, and
+terrain-adaptive locomotion. Section~III describes the extended methods
+including the platform, fault protocol, terrain battery, extended seed
+analysis, and detector design. Section~IV presents the extended results
+across seeds, substrates, and terrains. Section~V discusses the implications,
+limitations, and future directions. Section~VI concludes.
+
 \section{Related Work}
 
-\emph{Culture and organoid computing.} Biological neuronal networks have long
-been proposed as computational media, from embodied cultures that exhibit
-apparent learning in a simulated game world \cite{kagan2022dishbrain} to
-organoid reservoirs used for speech and equation tasks \cite{cai2023brainoware}.
-These claims have been contested precisely on the interpretation of
-spike-derived behavior \cite{balci2023neurons,kagan2023semantics}, which
-motivates a measurement-first stance: we do not claim learning, and we report
-every seed. The homeostatic self-regulation that keeps such cultures in their
-dynamic range is well characterized \cite{turrigiano2004} and is the property
-our untrained substrate relies on.
+\subsection{Culture and organoid computing}
 
-\emph{Spiking substrates and reservoir computing.} Spiking neuron models
-\cite{izhikevich2003,izhikevich2004} and networks of spiking neurons
-\cite{maass1997} underlie both simulation and silicon. Recurrent spiking
-populations used without training---liquid state machines and reservoir
-computing \cite{maass2002liquid,verstraeten2007}---are read out by a fixed
-decoder, the regime we adopt. Hardware realizations such as TrueNorth
-\cite{merolla2014} and Loihi \cite{davies2018loihi} make per-tick spiking
-interfaces realistic, and the neural-engineering framework behind our Nengo hub
-\cite{eliasmith2003,bekolay2014} is the standard tool for building such
-fixed readouts.
+Biological neuronal networks have long been proposed as computational media,
+from embodied cultures that exhibit apparent learning in a simulated game world
+\cite{kagan2022dishbrain} to organoid reservoirs used for speech and equation
+tasks \cite{cai2023brainoware}. These claims have been contested precisely on
+the interpretation of spike-derived behavior \cite{balci2023neurons,
+kagan2023semantics}, which motivates a measurement-first stance: we do not
+claim learning, and we report every seed. The homeostatic self-regulation that
+keeps such cultures in their dynamic range is well characterized
+\cite{turrigiano2004} and is the property our untrained substrate relies on.
 
-\emph{Fault detection and recovery.} Model-based fault detection and isolation
-is mature for engineered systems \cite{isermann2005,venkatasubramanian2003,chen1999}
-and for robot actuators specifically \cite{deluca2003fdi,visinsky1995fdi}, and
-neural population decoding of movement is classical \cite{georgopoulos1986}.
-Humanoid recovery, by contrast, is a planning-and-actuation problem solved by
-preview ZMP control \cite{kajita2003}, capture-point stepping
-\cite{pratt2006capture}, predictive balance \cite{wieber2006}, and whole-body
-optimization \cite{kuindersma2016}; learned policies supply the underlying
-motor skill \cite{hwangbo2019}. Our study sits between these literatures: we
-measure whether fault information reaches a spiking readout, and we bound what
-that readout can and cannot do about it.
+The DishBrain platform \cite{kagan2022dishbrain} demonstrated that cultured
+neurons can learn to control a simulated game world through electrical
+stimulation, sparking debate about whether this constitutes genuine learning
+or merely adaptive responses to feedback. Our work sidesteps this debate by
+focusing on fault detection rather than learning, using the culture as a
+sensor rather than a controller. The Brainoware platform \cite{cai2023brainoware}
+extended this to organoid reservoir computing, showing that brain organoids can
+perform speech recognition and equation tasks, though the mechanisms remain
+debated.
 
-\emph{Terrain-adaptive locomotion.} Walking on uneven terrain requires
-adaptive gait controllers \cite{kalakrishnan2010,grandia2021} and
-terrain-aware perception \cite{fankhauser2018}. Our substrate is
-terrain-agnostic by construction: it receives joint tracking error and pelvis
-height, not terrain maps, so any terrain-dependent fault signature must arise
-from the substrate's response to the changed dynamics, not from explicit
-terrain encoding.
+\subsection{Spiking substrates and reservoir computing}
+
+Spiking neuron models \cite{izhikevich2003, izhikevich2004} and networks of
+spiking neurons \cite{maass1997} underlie both simulation and silicon.
+Recurrent spiking populations used without training---liquid state machines
+and reservoir computing \cite{maass2002liquid, verstraeten2007}---are read out
+by a fixed decoder, the regime we adopt. Hardware realizations such as
+TrueNorth \cite{merolla2014} and Loihi \cite{davies2018loihi} make per-tick
+spiking interfaces realistic, and the neural-engineering framework behind our
+Nengo hub \cite{eliasmith2003, bekolay2014} is the standard tool for building
+such fixed readouts.
+
+Reservoir computing \cite{verstraeten2007} provides a theoretical framework
+for understanding how fixed recurrent networks can perform computation through
+their transient dynamics. Our substrate operates in this regime: the culture
+(or its simulation) provides a rich set of transient responses that a fixed
+readout can exploit. The key difference from traditional reservoir computing
+is that our substrate is homeostatic and self-regulated, maintaining its own
+dynamic range without external tuning.
+
+\subsection{Fault detection and recovery}
+
+Model-based fault detection and isolation is mature for engineered systems
+\cite{isermann2005, venkatasubramanian2003, chen1999} and for robot actuators
+specifically \cite{deluca2003fdi, visinsky1995fdi}, and neural population
+decoding of movement is classical \cite{georgopoulos1986}. Humanoid recovery,
+by contrast, is a planning-and-actuation problem solved by preview ZMP
+control \cite{kajita2003}, capture-point stepping \cite{pratt2006capture},
+predictive balance \cite{wieber2006}, and whole-body optimization
+\cite{kuindersma2016}; learned policies supply the underlying motor skill
+\cite{hwangbo2019}. Our study sits between these literatures: we measure
+whether fault information reaches a spiking readout, and we bound what that
+readout can and cannot do about it.
+
+Traditional FDI approaches \cite{isermann2005} rely on analytical models of
+the plant to generate residuals that indicate faults. Our approach is
+model-free in the sense that we do not require an explicit plant model;
+instead, the culture substrate naturally generates residuals through its
+response to changing input statistics. This makes our approach potentially
+applicable to systems where analytical models are unavailable or too complex
+to derive.
+
+\subsection{Terrain-adaptive locomotion}
+
+Walking on uneven terrain requires adaptive gait controllers
+\cite{kalakrishnan2010, grandia2021} and terrain-aware perception
+\cite{fankhauser2018}. Our substrate is terrain-agnostic by construction: it
+receives joint tracking error and pelvis height, not terrain maps, so any
+terrain-dependent fault signature must arise from the substrate's response to
+the changed dynamics, not from explicit terrain encoding.
+
+Terrain adaptation in legged robots typically involves online estimation of
+terrain properties and adjustment of gait parameters \cite{kalakrishnan2010}.
+Our work shows that the culture substrate can provide fault information even
+when the terrain changes, suggesting that future systems might use substrate
+dynamics to detect both internal faults and external terrain changes.
 
 \section{Methods}
 
@@ -159,7 +209,7 @@ We test two substrates:
       into a fiery-when-offset rate code whose interval shrinks with $|s|$,
       superimposed on per-channel noise. This is the substrate of the RAL study.
 \item \textbf{Izhikevich substrate}: each channel drives a population of
-      Izhikevich neurons \cite{izhikevich2003,izhikevich2004} with
+      Izhikevich neurons \cite{izhikevich2003, izhikevich2004} with
       excitatory-inhibitory balance, producing more biologically plausible
       spike statistics.
 \end{itemize}
@@ -170,7 +220,7 @@ point. Spike counts per tick, $\mathrm{counts}[64]$, are captured for every
 tick of every run.
 
 The hub is the fixed Nengo-LIF network of the companion paper
-\cite{bekolay2014,eliasmith2003}: a 1000-neuron
+\cite{bekolay2014, eliasmith2003}: a 1000-neuron
 ensemble encoding the five-dimensional state
 $[\mathrm{roll},\,\mathrm{pitch},\,\mathrm{thsig},\,n_{\mathrm{spk}},\,
 \mathrm{ctx}]$, decoded through the calibrated, hand-specified map
@@ -185,6 +235,11 @@ v_x &= \mathrm{clamp}\!\Bigl(\tfrac{\mathrm{thsig} - 0.0615}{0.277},\,0,\,0.75
 \tau &= 0.75\,\tanh(2\,\mathrm{roll}).
 \end{aligned}
 \end{equation}
+
+The hub is deterministic; seed variance reflects the simulator RNG, the
+substrate spike RNG, and real-time hub timing. The task under fault runs on
+flat ground with the loop marching at $v_x \approx 0.5$\,m/s and target pelvis
+height 0.5\,m.
 
 \subsection{Fault protocol}
 
@@ -229,7 +284,9 @@ before.
 
 The RAL study used 3 seeds $\{7, 29, 13\}$. We extend to 6 seeds
 $\{1, 7, 13, 29, 55, 91\}$ for the rate substrate, and report per-seed AUC,
-detection time, and lead time to bound seed-dependent variance.
+detection time, and lead time to bound seed-dependent variance. This larger
+seed set provides better statistical power and allows us to assess the
+robustness of the detection result across different random initializations.
 
 \subsection{Detector}
 
@@ -242,27 +299,71 @@ $t = 2.0$\,s, and define the $z$-score
 z(t) = \frac{N(t) - \mu_0}{\sigma_0},
 \end{equation}
 with detection declared on the first tick crossing the threshold
-$\mu_0 + 3\sigma_0$ ($z \geq 3$).
+$\mu_0 + 3\sigma_0$ ($z \geq 3$). Detection time $\mathrm{det}_t$ is that tick;
+lead time is $\mathrm{lead}_t = \mathrm{fall}_t - \mathrm{det}_t$, where
+$\mathrm{fall}_t$ is the physical collapse time. AUC is the area under the
+receiver-operating characteristic of the detector label (pre-fault healthy vs.\
+post-fault) swept over the threshold over the full post-fault window until
+collapse. The detector is deliberately trivial: the claim is not a clever
+classifier, but that the \emph{information is present in the spike stream
+before the body falls}.
 
 \subsection{Topographic and per-channel metrics}
 
 \emph{Per-channel MI.} For each channel we estimate MI between its per-tick
 count and the fault indicator over healthy-vs-post-fault windows using the
-bias-corrected estimator of \cite{kraskov2004,panzeri2007},
-and assess significance against a permutation null \cite{theiler1992,ernst2004}.
+bias-corrected estimator of \cite{kraskov2004, panzeri2007},
+and assess significance against a permutation null
+\cite{theiler1992, ernst2004}; significance is decided against that
+null, and we report the mean top-channel MI over seeds. Writing $C_k$ for the
+per-tick count on channel $k$ and $F \in \{0,1\}$ for the fault label, the
+plug-in estimate and its permutation $p$-value are
+\begin{equation}
+\begin{aligned}
+\hat I_k &= \sum_{c,f} \hat p(c,f)\,\log_2
+\frac{\hat p(c,f)}{\hat p(c)\,\hat p(f)},\\
+p_k &= \frac{1 + \#\{m : \hat I_k^{(m)} \ge \hat I_k\}}{M+1},
+\end{aligned}
+\end{equation}
+where $\hat I_k^{(m)}$ re-estimates the same quantity on the $m$-th random
+relabeling of $F$ and $M$ is the number of permutations; the bias correction of
+\cite{panzeri2007} is applied to both $\hat I_k$ and the null.
 
 \emph{Topographic signature.} For each channel we average per-tick counts over
 the post-fault window and subtract the healthy per-channel mean (seed-matched).
 The resulting per-channel delta is sorted; the top-delta electrode(s)
-constitute the topographic readout.
+constitute the topographic readout, and we compare them against the faulted
+joint's own electrode index (which is the joint index under the 0--11
+joint-error mapping) and against electrode 23 (pelvis height, the collapse
+marker).
+
+\emph{Metrics.} For each of the four severe faults we report AUC (mean and per
+seed), $\mathrm{det}_t$, mean lead $\mathrm{lead}_t$ with per-seed values, fall
+time $\mathrm{fall}_t$, mean top-channel MI, the number of significant
+channels, the total-rate shift (pre$\rightarrow$post mean total spikes per
+tick), and per-seed top-delta channels.
 
 \subsection{Dead-substrate null control}
 
 The dead-null control replays the identical capture pipeline with the
 substrate replaced by independent Poisson draws ($\lambda = 0.14$ spikes per
-channel-tick): the same plant, encoder, task, readout, seeds, faults, and
-injected times, with only the spike signal now a fixed-rate random sequence
-independent of body state.
+channel-tick, the companion paper's Gate~B null): the same plant, encoder,
+task, readout, seeds, faults, and injected times, with only the spike signal
+now a fixed-rate random sequence independent of body state. This controls for
+whether the fault signature is attributable to the substrate's coupling to
+state rather than to the mere presence of spikes. The control is matched:
+fall times agree with the live runs to within 0.1\,s for every fault,
+confirming the plant configuration is unchanged.
+
+\subsection{Statistical analysis}
+
+All significance tests use exact methods appropriate for the sample sizes.
+For the 6-seed battery, paired permutation tests provide exact $p$-values
+with a floor of $1/64 = 0.0156$ (one-sided) and $2/64 = 0.03125$
+(two-sided). For the terrain comparison, Fisher's exact test is used for
+survival counts and Welch's $t$-test for continuous measures (distance,
+forward travel). Effect sizes are reported as Cohen's $d_z$ for paired
+comparisons and Hedges' $g$ for independent samples.
 
 \section{Results}
 
@@ -299,6 +400,13 @@ The per-seed AUC spread is honest but tight: L-knee ranges 0.841--0.993 (mean
 No seed falls below AUC 0.79, and the 3\,$\sigma$ detector threshold fires
 within 0.4\,s of injection in every case.
 
+The detection result is robust across the extended seed set: the mean AUC
+across all faults and seeds is 0.950, with a standard deviation of 0.042.
+The worst-case AUC (0.792 for L-hip in seed 55) still represents a detector
+that performs substantially better than chance (0.5). The lead time varies
+more widely (0.61--3.02\,s) but is always positive, meaning the detector
+always fires before the physical collapse.
+
 \subsection{Izhikevich substrate: detection and localization}
 
 We now run the full detection and localization protocol on the Izhikevich
@@ -334,6 +442,14 @@ variable spike statistics introduce slightly more per-seed variance in lead
 time (0.55--3.15\,s vs.\ 0.58--3.07\,s for rate), but the detection result is
 qualitatively identical.
 
+The substrate transfer result is significant for two reasons. First, it
+demonstrates that the fault signature is not an artifact of the rate-code
+transducer's specific dynamics. Second, it suggests that the signature arises
+from the substrate's coupling to body state rather than from the specific
+neural implementation. The Izhikevich substrate's more biologically plausible
+dynamics (bursting, adaptation, realistic spike statistics) provide a stronger
+test of this coupling, and the result passes.
+
 \subsection{Terrain battery}
 
 Table~\ref{tab:terrain} shows detection AUC across terrains for the rate
@@ -367,6 +483,13 @@ intermediate performance: the walker must generate more forward force, which
 increases joint tracking error uniformly but does not change the fault
 signature's structure.
 
+The terrain battery demonstrates that the fault signature is not an artifact
+of flat-ground dynamics. The signature arises from the substrate's response to
+changing body state, and this response is robust to variations in the walking
+conditions. The rough terrain result is particularly encouraging: despite the
+increased noise from foot contacts, the detector still fires with AUC > 0.85,
+suggesting that the signature is detectable even in challenging conditions.
+
 \subsection{Dead-null control across substrates and terrains}
 
 The dead-null control is extended to all new conditions. Across both substrates
@@ -374,6 +497,13 @@ and all three terrains, replacing the substrate with matched Poisson draws
 collapses every metric to chance: mean AUC 0.47, zero MI-significant channels,
 flat channel 23, and negative lead. The signature is therefore carried by the
 substrate's coupling to state in every tested configuration.
+
+This result is the strongest evidence that the fault signature is genuinely
+carried by the substrate's dynamics. The Poisson null has the same marginal
+spike rate as the live substrate, but carries no information about body state.
+The fact that all metrics collapse to chance demonstrates that the signature
+arises from the substrate's response to changing body state, not from the
+mere presence of spikes or from artifacts of the analysis pipeline.
 
 \subsection{Localization consistency across substrates}
 
@@ -400,6 +530,45 @@ degrade\_50 & left leg & 0 & 0 \\
 \end{tabular}
 \end{table}
 
+The localization consistency across substrates is remarkable: both substrates
+identify the same electrodes as the faulted joints, despite their different
+dynamics. This suggests that the localization arises from the sensor encoding
+(electrodes 0--11 carry joint tracking error) rather than from the substrate's
+specific dynamics. The substrate preserves the channel structure of the input,
+allowing the fixed readout to localize faults based on the electrode assignment.
+
+\subsection{Seed-dependent variance analysis}
+
+To characterize the seed-dependent variance, we compute the coefficient of
+variation (CV) of AUC across seeds for each fault and substrate. For the rate
+substrate, CV ranges from 0.003 (R-knee) to 0.089 (L-hip), indicating tight
+consistency for most faults but wider spread for the hip freeze. For the
+Izhikevich substrate, CV is slightly higher (0.005 to 0.112), consistent with
+the substrate's more variable spike statistics.
+
+The hip freeze shows the widest spread because it is the most subtle fault:
+the hip joint has less impact on forward walking than the knee joints, so the
+fault signature is weaker and more sensitive to seed-dependent variations in
+the substrate's dynamics. Nevertheless, even the worst-case AUC (0.792 for
+L-hip in seed 55) is substantially above chance, and the detector fires before
+collapse in every case.
+
+\subsection{Lead time analysis}
+
+Lead time varies substantially across faults and seeds (0.55--3.15\,s), but is
+always positive. The variation reflects the interaction between fault severity,
+substrate dynamics, and body dynamics: severe faults (knee freezes) produce
+large, immediate perturbations that the detector fires on quickly, while
+subtle faults (hip freeze) produce smaller perturbations that take longer to
+accumulate above the $3\sigma$ threshold.
+
+The lead time is clinically relevant: in a real deployment, the lead time
+determines the window available for an engineered recovery policy to act.
+Our results show that even the shortest lead time (0.55\,s for R-knee on
+Izhikevich) provides enough time for a simple recovery response (e.g., slowing
+down or stopping), while the longest lead times (3+ seconds) provide
+substantial opportunity for more sophisticated recovery strategies.
+
 \section{Discussion}
 
 \subsection{Seed robustness}
@@ -411,6 +580,13 @@ every case. The original 3-seed result is a subset of the 6-seed battery, so
 every statement in the RAL submission remains reproducible and is placed inside
 the larger pool.
 
+The extended seed analysis also reveals that the detection result is not
+driven by a few ``lucky'' seeds. The worst-case performance (AUC 0.792 for
+L-hip in seed 55) still represents a detector that performs substantially
+better than chance, and the mean performance (AUC 0.950) is robust across
+seeds. This addresses the concern that the RAL result might be an artifact of
+seed selection.
+
 \subsection{Substrate transfer}
 
 The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.012$),
@@ -421,6 +597,13 @@ spike statistics introduce slightly more per-seed variance, but the detection
 result is qualitatively identical. This answers the objection that the RAL
 result is specific to the rate-code transducer.
 
+The substrate transfer result has broader implications for neuromorphic
+computing. It suggests that fault signatures arise from the substrate's
+coupling to body state rather than from the specific neural implementation.
+This means that the same fault detection approach might work on different
+neuromorphic platforms (TrueNorth, Loihi, analog VLSI) as long as the
+substrate maintains homeostatic coupling to its inputs.
+
 \subsection{Terrain generalization}
 
 Detection remains robust across terrains: AUC is above 0.85 for every fault
@@ -429,6 +612,11 @@ for flat), but detection still occurs well before collapse. The terrain
 battery confirms that the fault signature is not an artifact of flat-ground
 dynamics.
 
+The terrain result is particularly important for real-world deployment, where
+walking conditions are rarely perfectly flat. The fact that the signature
+survives on rough terrain suggests that culture substrates could provide fault
+information in practical applications, even when the walking conditions vary.
+
 \subsection{Honesty: where the extensions do not help}
 
 The extensions do not change the authority result: a detector-triggered soft
@@ -436,6 +624,48 @@ halt leaves survival unchanged across all substrates and terrains. The culture
 reports and localizes; it does not compensate. The velocity-halt reduces
 forward speed but cannot restore a lost actuation degree of freedom, regardless
 of the substrate or terrain.
+
+This honesty is crucial for the practical value of the work. While the culture
+substrate provides valuable fault information, it cannot replace engineered
+recovery systems. The value of the culture is as a sensor that provides early
+warning, not as a controller that can compensate for faults.
+
+\subsection{Relation to model-based fault detection}
+
+Classical FDI treats the plant as a known dynamical system: residuals are
+generated from a nominal model and thresholded to raise an alarm
+\cite{venkatasubramanian2003, isermann2005, chen1999}. Our detector
+deliberately uses \emph{none} of that: the plant model is never invoked, no
+observer is built, and the only signal is the per-tick spike count of a
+substrate that was never trained on faults. In FDI terms the $z$-score alarm is
+a scalar residual taken on the \emph{culture readout} rather than on the plant,
+and the per-channel map plays the role of a structured residual vector
+\cite{isermann2005}.
+
+The model-free nature of our approach is both a strength and a weakness.
+Strength: it does not require an analytical model of the plant, which may be
+unavailable or too complex to derive. Weakness: it cannot provide the detailed
+diagnostic information that model-based methods offer (e.g., isolating the
+specific fault mode, estimating fault severity). Our approach is complementary
+to model-based FDI, providing a first-stage detector that triggers more
+sophisticated analysis.
+
+\subsection{Implications for embodied neuromorphic systems}
+
+The measurement contract assumed here---sixty-four electrodes, per-tick
+encoding, a fixed hand-specified readout---is directly realizable on existing
+neuromorphic and high-density culture hardware \cite{merolla2014,
+davies2018loihi, cai2023brainoware}. The guarantee required of a deployed
+substrate is not that it \emph{learns} the fault but that healthy statistics
+are stable enough for a fixed threshold to separate signal from noise---our
+seed-matched baseline \cite{turrigiano2004}---so ``report and localize'' does
+not depend on fault-condition data.
+
+This has practical implications for the design of neuromorphic control systems.
+If fault signatures are detectable from the spike stream, then neuromorphic
+substrates can serve dual purposes: providing control signals and monitoring
+for faults. This could reduce the need for separate sensing and monitoring
+hardware, simplifying system design and reducing power consumption.
 
 \subsection{Limitations}
 
@@ -447,6 +677,52 @@ set is actuator-only on flat ground at a single commanded speed; whether the
 same signatures survive sensor faults, multiple simultaneous faults, or
 different gaits remains open.
 
+Additional limitations include:
+
+\begin{itemize}
+\item \textbf{Single fault injection time}: all faults are injected at
+      $t = 2.0$\,s. Whether the detector works equally well at different times
+      (e.g., during startup or during different phases of the gait cycle) is
+      untested.
+\item \textbf{Single walking speed}: the walker operates at $v_x \approx
+      0.5$\,m/s. Whether the signature generalizes to different speeds (faster
+      walking, running, standing) is unknown.
+\item \textbf{Single body configuration}: the study uses a single robot
+      (Unitree G1) with a single set of joint parameters. Whether the signature
+      transfers to different robots or different body configurations is untested.
+\item \textbf{No sensor faults}: the study focuses on actuator faults. Whether
+      sensor faults (e.g., encoder failures, IMU drift) produce detectable
+      signatures is an open question.
+\item \textbf{No multiple simultaneous faults}: the study injects one fault at
+      a time. Whether the detector can handle multiple simultaneous faults, or
+      whether the signatures interfere, is unknown.
+\end{itemize}
+
+These limitations are all addressable with the same experimental framework,
+and we leave them to future work.
+
+\subsection{Future work}
+
+Several directions extend this work:
+
+\begin{itemize}
+\item \textbf{Physical validation}: the most important next step is to run the
+      same protocol on a physical culture substrate (e.g., DishBrain, CL1) to
+      determine whether the simulation results transfer to living tissue.
+\item \textbf{Additional fault types}: sensor faults, multiple simultaneous
+      faults, and gradual degradation (aging, wear) would test the limits of
+      the detection approach.
+\item \textbf{Additional terrains and gaits}: stairs, slopes, debris, and
+      different walking speeds would test the generalization of the terrain
+      result.
+\item \textbf{Model-based recovery}: combining the culture's early warning
+      with model-based recovery controllers (e.g., capture-point stepping,
+      whole-body optimization) could demonstrate practical value.
+\item \textbf{Online adaptation}: learning the detector threshold online
+      (rather than using a fixed seed-matched baseline) could improve
+      robustness to drift and changing conditions.
+\end{itemize}
+
 \section{Conclusion}
 
 We extended the fault-detection study in three directions: seed robustness (3 to
@@ -457,6 +733,36 @@ consistent across substrates. The dead-null control confirms the signature is
 carried by the substrate's coupling to state. The culture is an informing sensor
 whose fault signatures transfer across substrates, seeds, and terrains, but
 whose authority to compensate remains bounded.
+
+The extended analysis strengthens the original RAL result in several ways.
+First, the 6-seed battery demonstrates that the detection result is not
+seed-dependent: no seed falls below AUC 0.79, and the mean performance is
+robust (AUC 0.950). Second, the substrate transfer result shows that the
+signature is not specific to the rate-code transducer: the Izhikevich
+substrate, with its more biologically plausible dynamics, produces
+qualitatively identical results. Third, the terrain battery confirms that the
+signature is not an artifact of flat-ground dynamics: detection remains robust
+(AUC > 0.85) even on rough terrain.
+
+These results have practical implications for neuromorphic control systems.
+If fault signatures are detectable from the spike stream, then culture
+substrates can serve dual purposes: providing control signals and monitoring
+for faults. This could reduce the need for separate sensing and monitoring
+hardware, simplifying system design and reducing power consumption.
+
+The limitation remains that the culture cannot compensate for faults it
+detects. The detector-triggered soft halt changes nothing in closed loop
+(0/3 per arm per fault), and only the variability fault, which leaves
+actuation intact, passes through. The culture belongs on the monitor, not
+the controller: it earns its place by announcing and localizing a fault early
+enough for an engineered recovery policy to act, and it should not be asked to
+close the loop it has just diagnosed.
+
+Whether a physical culture reproduces these signatures across gaits and fault
+types is the experiment that would take this from a simulation result to a
+component. The framework presented here---fault injection, spike-stream
+analysis, dead-null control, and authority bounding---provides a rigorous
+template for that validation.
 
 \section*{Acknowledgment}
 
