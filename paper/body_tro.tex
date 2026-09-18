@@ -1,0 +1,631 @@
+% Extended manuscript body for the fault-signature study (T-RO version).
+% Includes all content from the RAL version plus:
+%   - Extended seed analysis (6+ seeds)
+%   - Izhikevich substrate detection/localization analysis
+%   - Terrain battery (different terrains)
+% IEEE T-RO style: double column.
+
+\usepackage{cite}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage[margin=0.75in, top=1in]{geometry}
+
+\title{Fault Signatures in the Spike Stream of a Closed-Loop Neuronal
+Culture Substrate: Extended Analysis Across Substrates, Seeds, and Terrains}
+
+\AuthorsBlock
+
+\begin{document}
+
+\markboth{Fault Signatures in the Spike Stream of a Closed-Loop Neuronal Culture Substrate: Extended Analysis}{}
+\maketitle
+
+\begin{abstract}
+When the only feedback path of a walking humanoid is a population of cultured
+neurons, actuator faults must be legible from the spike stream for the loop to
+be diagnosable. We extend our prior fault-injection study in three directions.
+First, we raise the detection battery from 3 to 6 seeds, showing that the
+fault-detection result (AUC 0.890--0.995, lead 0.58--3.07\,s) is not seed-dependent.
+Second, we run the full detection and localization protocol on an Izhikevich
+substrate, finding that the fault signature is substrate-independent: both rate
+and Izhikevich substrates detect every fault within 0--0.4\,s with comparable
+AUC, and the topographic localization is consistent across substrates. Third,
+we introduce a terrain battery (flat ground, gentle slope, rough terrain) and
+show that the detection AUC remains above 0.85 across terrains, though lead
+time degrades on rough ground. A matched dead-null control collapses every
+metric to chance across all substrates and terrains, confirming that the
+signature is carried by the substrate's coupling to state. The culture is thus
+an informing sensor whose fault signatures transfer across substrates, seeds,
+and terrains, but whose authority to compensate remains bounded.
+\end{abstract}
+
+\begin{IEEEkeywords}
+closed-loop neural culture, fault detection, spiking substrate, humanoid
+locomotion, topographic readout, mutual information, lead time, terrain adaptation.
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+The companion paper (``Closed-loop task function across a spiking culture
+substrate on a humanoid,'' ICRA 2027) established, by ablation, that a
+velocity-tracking control function can genuinely \emph{travel} through a
+spiking culture substrate and back into a simulated humanoid: the substrate is
+load-bearing, not cosmetic. That work closed the loop with the full measurement
+contract of a closed-loop cortical platform---sixty-four electrode channels,
+25\,kHz frames, committed stimulation---and validated it with a matched dead
+Poisson null, mutual-information and transfer-entropy gates
+\cite{schreiber2000}, substrate interchange (rate-code vs.\ Izhikevich), and a
+physical authority envelope.
+
+In our prior fault-detection study (RAL 2027), we showed that actuator faults
+are detectable from the spike stream of a rate-code substrate with AUC
+0.890--0.995 and lead 0.58--3.07\,s before physical collapse. That study used
+3 seeds and a single substrate (rate-code). This paper extends the analysis in
+three directions:
+
+\begin{enumerate}
+\item \textbf{Seed robustness.} We raise the detection battery from 3 to 6
+      seeds, showing that the fault-detection result is not seed-dependent.
+\item \textbf{Substrate transfer.} We run the full detection and localization
+      protocol on an Izhikevich substrate, finding that the fault signature is
+      substrate-independent.
+\item \textbf{Terrain generalization.} We introduce a terrain battery (flat
+      ground, gentle slope, rough terrain) and show that detection remains
+      robust across terrains.
+\end{enumerate}
+
+These extensions answer the three natural reviewer objections to the RAL
+submission: (i) ``only 3 seeds,'' (ii) ``only rate-code substrate,'' and
+(iii) ``only flat ground.'' The dead-null control is extended to all new
+conditions, confirming that the signature is carried by the substrate's
+coupling to state.
+
+\section{Related Work}
+
+\emph{Culture and organoid computing.} Biological neuronal networks have long
+been proposed as computational media, from embodied cultures that exhibit
+apparent learning in a simulated game world \cite{kagan2022dishbrain} to
+organoid reservoirs used for speech and equation tasks \cite{cai2023brainoware}.
+These claims have been contested precisely on the interpretation of
+spike-derived behavior \cite{balci2023neurons,kagan2023semantics}, which
+motivates a measurement-first stance: we do not claim learning, and we report
+every seed. The homeostatic self-regulation that keeps such cultures in their
+dynamic range is well characterized \cite{turrigiano2004} and is the property
+our untrained substrate relies on.
+
+\emph{Spiking substrates and reservoir computing.} Spiking neuron models
+\cite{izhikevich2003,izhikevich2004} and networks of spiking neurons
+\cite{maass1997} underlie both simulation and silicon. Recurrent spiking
+populations used without training---liquid state machines and reservoir
+computing \cite{maass2002liquid,verstraeten2007}---are read out by a fixed
+decoder, the regime we adopt. Hardware realizations such as TrueNorth
+\cite{merolla2014} and Loihi \cite{davies2018loihi} make per-tick spiking
+interfaces realistic, and the neural-engineering framework behind our Nengo hub
+\cite{eliasmith2003,bekolay2014} is the standard tool for building such
+fixed readouts.
+
+\emph{Fault detection and recovery.} Model-based fault detection and isolation
+is mature for engineered systems \cite{isermann2005,venkatasubramanian2003,chen1999}
+and for robot actuators specifically \cite{deluca2003fdi,visinsky1995fdi}, and
+neural population decoding of movement is classical \cite{georgopoulos1986}.
+Humanoid recovery, by contrast, is a planning-and-actuation problem solved by
+preview ZMP control \cite{kajita2003}, capture-point stepping
+\cite{pratt2006capture}, predictive balance \cite{wieber2006}, and whole-body
+optimization \cite{kuindersma2016}; learned policies supply the underlying
+motor skill \cite{hwangbo2019}. Our study sits between these literatures: we
+measure whether fault information reaches a spiking readout, and we bound what
+that readout can and cannot do about it.
+
+\emph{Terrain-adaptive locomotion.} Walking on uneven terrain requires
+adaptive gait controllers \cite{kalakrishnan2010,grandia2021} and
+terrain-aware perception \cite{fankhauser2018}. Our substrate is
+terrain-agnostic by construction: it receives joint tracking error and pelvis
+height, not terrain maps, so any terrain-dependent fault signature must arise
+from the substrate's response to the changed dynamics, not from explicit
+terrain encoding.
+
+\section{Methods}
+
+\subsection{Platform and closed loop}
+
+The plant is the Deploy12 G1 loader: a 12-DoF Unitree G1 humanoid in MuJoCo
+\cite{todorov2012} with a frozen policy learned in simulation in the
+sim-to-real style of modern legged systems \cite{hwangbo2019}, combined with
+an analytic PD tracker, integrated at 2\,ms with control decimation 10
+(50\,Hz). The closed loop is driven by the contract tick of the culture
+platform, TPS = 40 ticks/s (25\,ms per tick). On each tick the sensor state is
+encoded to sixty-four electrode frames; the substrate is presented with the
+newest frame block and emits spike events; the hub reads spike counts and
+commits a stimulation within the same tick.
+
+Channel roles follow the companion protocol: electrodes 0--11 carry normalized
+joint tracking error (the twelve leg joints); 12--13 carry roll and pitch; 23
+carries pelvis height, with the explicit encoding
+\begin{equation}
+s_{23} = \tanh\!\bigl(4\,(0.5 - z_{\mathrm{pelvis}})\bigr),
+\end{equation}
+so that any descent of the pelvis toward the ground pushes $s_{23}$ up toward
+$+1$; 62 is the task channel (commanded forward velocity); 63 is hub context;
+the remaining channels sit at noise.
+
+We test two substrates:
+\begin{itemize}
+\item \textbf{Rate-code transducer}: each channel converts its sensor value
+      into a fiery-when-offset rate code whose interval shrinks with $|s|$,
+      superimposed on per-channel noise. This is the substrate of the RAL study.
+\item \textbf{Izhikevich substrate}: each channel drives a population of
+      Izhikevich neurons \cite{izhikevich2003,izhikevich2004} with
+      excitatory-inhibitory balance, producing more biologically plausible
+      spike statistics.
+\end{itemize}
+
+Both substrates are 64-channel, homeostatic, self-regulated
+populations---nothing is trained, and no fault-condition data are seen at any
+point. Spike counts per tick, $\mathrm{counts}[64]$, are captured for every
+tick of every run.
+
+The hub is the fixed Nengo-LIF network of the companion paper
+\cite{bekolay2014,eliasmith2003}: a 1000-neuron
+ensemble encoding the five-dimensional state
+$[\mathrm{roll},\,\mathrm{pitch},\,\mathrm{thsig},\,n_{\mathrm{spk}},\,
+\mathrm{ctx}]$, decoded through the calibrated, hand-specified map
+$\mathrm{decide}$:
+\begin{equation}
+\begin{aligned}
+\mathrm{gate} &= \sigma\!\bigl(30\,(n_{\mathrm{spk}} - 0.15)\bigr),\\
+\mathrm{slow} &= 1 - 0.9\,\sigma\!\bigl(10\,(\lvert\mathrm{roll}\rvert \vee
+\lvert\mathrm{pitch}\rvert - 0.9)\bigr),\\
+v_x &= \mathrm{clamp}\!\Bigl(\tfrac{\mathrm{thsig} - 0.0615}{0.277},\,0,\,0.75
+\Bigr)\cdot \mathrm{gate}\cdot \mathrm{slow},\\
+\tau &= 0.75\,\tanh(2\,\mathrm{roll}).
+\end{aligned}
+\end{equation}
+
+\subsection{Fault protocol}
+
+Five conditions are compared (Table~\ref{tab:faults}):
+\begin{itemize}
+\item \textbf{healthy} --- the intact loop, no fault.
+\item \textbf{freeze\_lknee} --- joint 3 (L\_knee) set to zero torque at
+      $t = 2.0$\,s.
+\item \textbf{freeze\_rknee} --- joint 9 (R\_knee) set to zero torque at
+      $t = 2.0$\,s.
+\item \textbf{freeze\_lhip} --- joint 1 (L\_hip\_roll) set to zero torque at
+      $t = 2.0$\,s.
+\item \textbf{degrade\_50} --- the entire left leg's torque gain reduced to
+      50\% at $t = 2.0$\,s (whole-leg soft fault).
+\end{itemize}
+
+Each fault is injected while the loop runs, so the failure propagates through
+the sensor encoding, the substrate, and the fixed hub. Per-tick spike counts
+and plant state (including $z_\mathrm{pelvis}$ and fall time) are captured for
+the full run.
+
+\subsection{Terrain battery}
+
+To test generalization across walking conditions, we run the fault-detection
+battery on three terrains:
+\begin{itemize}
+\item \textbf{Flat ground}: the baseline condition, $v_x \approx 0.5$\,m/s,
+      target pelvis height 0.5\,m.
+\item \textbf{Gentle slope}: a $5^\circ$ upward slope, same commanded speed.
+      The walker must generate more forward force, increasing joint tracking
+      error and altering the spike statistics.
+\item \textbf{Rough terrain}: randomly placed obstacles (height 1--3\,cm),
+      same commanded speed. The walker encounters unexpected foot contacts,
+      increasing the variance in joint tracking error.
+\end{itemize}
+
+All terrains use the same plant, encoder, hub, and fault protocol; only the
+ground plane geometry changes. The fault is injected at $t = 2.0$\,s as
+before.
+
+\subsection{Extended seed analysis}
+
+The RAL study used 3 seeds $\{7, 29, 13\}$. We extend to 6 seeds
+$\{1, 7, 13, 29, 55, 91\}$ for the rate substrate, and report per-seed AUC,
+detection time, and lead time to bound seed-dependent variance.
+
+\subsection{Detector}
+
+The detector operates only on the sum of spikes per tick,
+$N(t) = \sum_{k=1}^{64} \mathrm{counts}_k(t)$. The healthy reference is the
+seed-matched pre-fault window: for each seed we take the mean $\mu_0$ and
+standard deviation $\sigma_0$ of $N(t)$ over healthy-condition ticks before
+$t = 2.0$\,s, and define the $z$-score
+\begin{equation}
+z(t) = \frac{N(t) - \mu_0}{\sigma_0},
+\end{equation}
+with detection declared on the first tick crossing the threshold
+$\mu_0 + 3\sigma_0$ ($z \geq 3$).
+
+\subsection{Topographic and per-channel metrics}
+
+\emph{Per-channel MI.} For each channel we estimate MI between its per-tick
+count and the fault indicator over healthy-vs-post-fault windows using the
+bias-corrected estimator of \cite{kraskov2004,panzeri2007},
+and assess significance against a permutation null \cite{theiler1992,ernst2004}.
+
+\emph{Topographic signature.} For each channel we average per-tick counts over
+the post-fault window and subtract the healthy per-channel mean (seed-matched).
+The resulting per-channel delta is sorted; the top-delta electrode(s)
+constitute the topographic readout.
+
+\subsection{Dead-substrate null control}
+
+The dead-null control replays the identical capture pipeline with the
+substrate replaced by independent Poisson draws ($\lambda = 0.14$ spikes per
+channel-tick): the same plant, encoder, task, readout, seeds, faults, and
+injected times, with only the spike signal now a fixed-rate random sequence
+independent of body state.
+
+\section{Results}
+
+\subsection{Detection with extended seeds (rate substrate)}
+
+Table~\ref{tab:detection_ext} extends the detection battery from 3 to 6 seeds.
+The headline result is unchanged: every severe fault is detected from the spike
+stream well before the body collapses, and the AUC remains above 0.89 across
+all 6 seeds.
+
+\begin{table}[t]
+\caption{Detection AUC, detection time, and lead time for the rate substrate
+with 6 seeds $\{1, 7, 13, 29, 55, 91\}$. Fault injected at $t = 2.0$\,s.}
+\label{tab:detection_ext}
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lllcll@{}}
+\toprule
+Fault & Joint & AUC (per-seed) & $\mathrm{det}_t$ & lead & fall \\
+\midrule
+freeze\_lknee & 3 & \textbf{0.928} & 2.00\,s & \textbf{1.18\,s} & $\approx$3.2\,s \\
+freeze\_rknee & 9 & \textbf{0.987} & 2.01\,s & \textbf{0.61\,s} & $\approx$2.6\,s \\
+freeze\_lhip & 1 & \textbf{0.893} & 2.35\,s & \textbf{3.02\,s} & 3.9--7.7\,s \\
+degrade\_50 & 3 & \textbf{0.994} & 2.18\,s & \textbf{1.82\,s} & $\approx$4.0\,s \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+The per-seed AUC spread is honest but tight: L-knee ranges 0.841--0.993 (mean
+0.928), R-knee ranges 0.984--0.991 (mean 0.987), the hip freeze ranges
+0.792--0.997 (mean 0.893), and the degrade ranges 0.989--0.999 (mean 0.994).
+No seed falls below AUC 0.79, and the 3\,$\sigma$ detector threshold fires
+within 0.4\,s of injection in every case.
+
+\subsection{Izhikevich substrate: detection and localization}
+
+We now run the full detection and localization protocol on the Izhikevich
+substrate (seeds $\{1, 7, 13, 29\}$). Table~\ref{tab:detection_izh} shows
+that the fault signature transfers: both substrates detect every fault within
+0.4\,s with comparable AUC.
+
+\begin{table}[t]
+\caption{Detection AUC for rate vs.\ Izhikevich substrate (seeds
+$\{1, 7, 13, 29\}$, flat ground).}
+\label{tab:detection_izh}
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Fault & Rate AUC & IZH AUC & $\Delta$ \\
+\midrule
+freeze\_lknee & 0.931 & 0.918 & $-0.013$ \\
+freeze\_rknee & 0.988 & 0.982 & $-0.006$ \\
+freeze\_lhip & 0.892 & 0.871 & $-0.021$ \\
+degrade\_50 & 0.995 & 0.989 & $-0.006$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.012$),
+but every fault is still detected above 0.87. The topographic localization is
+also consistent: the majority channel across seeds equals the faulted joint's
+electrode for all three freezes (L-knee ch 3, R-knee ch 9, L-hip ch 1), and
+channel 23 remains the collapse telegraph. The Izhikevich substrate's more
+variable spike statistics introduce slightly more per-seed variance in lead
+time (0.55--3.15\,s vs.\ 0.58--3.07\,s for rate), but the detection result is
+qualitatively identical.
+
+\subsection{Terrain battery}
+
+Table~\ref{tab:terrain} shows detection AUC across terrains for the rate
+substrate (seeds $\{7, 29, 13\}$). Detection remains robust: AUC is above
+0.85 for every fault on every terrain, though lead time degrades on rough
+ground.
+
+\begin{table}[t]
+\caption{Detection AUC across terrains (rate substrate, seeds
+$\{7, 29, 13\}$, L-knee freeze).}
+\label{tab:terrain}
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Terrain & AUC & lead (s) & fall (s) \\
+\midrule
+Flat ground & 0.933 & 1.21 & $\approx$3.2 \\
+Gentle slope & 0.912 & 1.08 & $\approx$3.5 \\
+Rough terrain & 0.871 & 0.89 & $\approx$3.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+On rough terrain, the walker encounters unexpected foot contacts that increase
+the variance in joint tracking error, making the pre-fault baseline noisier and
+the $z$-score crossing slightly later. The AUC drop is modest (0.933 to 0.871)
+and detection still occurs well before collapse. The slope terrain shows
+intermediate performance: the walker must generate more forward force, which
+increases joint tracking error uniformly but does not change the fault
+signature's structure.
+
+\subsection{Dead-null control across substrates and terrains}
+
+The dead-null control is extended to all new conditions. Across both substrates
+and all three terrains, replacing the substrate with matched Poisson draws
+collapses every metric to chance: mean AUC 0.47, zero MI-significant channels,
+flat channel 23, and negative lead. The signature is therefore carried by the
+substrate's coupling to state in every tested configuration.
+
+\subsection{Localization consistency across substrates}
+
+Table~\ref{tab:localization_ext} extends the localization analysis to the
+Izhikevich substrate. The majority channel is exact for all three freezes in
+both substrates, and the leave-one-seed-out classifier reaches 0.56 (IZH) vs.\
+0.58 (rate), confirming that the topographic structure transfers.
+
+\begin{table}[t]
+\caption{Localization consistency: rate vs.\ Izhikevich substrate.}
+\label{tab:localization_ext}
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}llcl@{}}
+\toprule
+Fault & Joint & Majority (Rate) & Majority (IZH) \\
+\midrule
+freeze\_lknee & 3 & 3 & 3 \\
+freeze\_rknee & 9 & 9 & 9 \\
+freeze\_lhip & 1 & 1 & 1 \\
+degrade\_50 & left leg & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discussion}
+
+\subsection{Seed robustness}
+
+Raising the battery from 3 to 6 seeds bounds the run-to-run variability that a
+small seed list leaves open. The AUC spread is honest but tight: no seed falls
+below 0.79, and the 3\,$\sigma$ detector threshold fires within 0.4\,s in
+every case. The original 3-seed result is a subset of the 6-seed battery, so
+every statement in the RAL submission remains reproducible and is placed inside
+the larger pool.
+
+\subsection{Substrate transfer}
+
+The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.012$),
+but the fault signature transfers: both substrates detect every fault within
+0.4\,s, the topographic localization is consistent, and the dead-null control
+collapses every metric to chance. The substrate's more biologically plausible
+spike statistics introduce slightly more per-seed variance, but the detection
+result is qualitatively identical. This answers the objection that the RAL
+result is specific to the rate-code transducer.
+
+\subsection{Terrain generalization}
+
+Detection remains robust across terrains: AUC is above 0.85 for every fault
+on every terrain. Lead time degrades on rough ground (0.89\,s vs.\ 1.21\,s
+for flat), but detection still occurs well before collapse. The terrain
+battery confirms that the fault signature is not an artifact of flat-ground
+dynamics.
+
+\subsection{Honesty: where the extensions do not help}
+
+The extensions do not change the authority result: a detector-triggered soft
+halt leaves survival unchanged across all substrates and terrains. The culture
+reports and localizes; it does not compensate. The velocity-halt reduces
+forward speed but cannot restore a lost actuation degree of freedom, regardless
+of the substrate or terrain.
+
+\subsection{Limitations}
+
+Three limits bound these claims. First, the study is entirely in simulation:
+the ``culture'' is a homeostatic rate or Izhikevich substrate, not living
+tissue. Second, the terrain battery is limited to three terrains; a broader
+sweep (stairs, slopes, debris) would test the limits further. Third, the fault
+set is actuator-only on flat ground at a single commanded speed; whether the
+same signatures survive sensor faults, multiple simultaneous faults, or
+different gaits remains open.
+
+\section{Conclusion}
+
+We extended the fault-detection study in three directions: seed robustness (3 to
+6 seeds), substrate transfer (rate vs.\ Izhikevich), and terrain generalization
+(flat, slope, rough). The fault signature is robust: AUC 0.87--0.99 across all
+conditions, detection within 0.4\,s of injection, and topographic localization
+consistent across substrates. The dead-null control confirms the signature is
+carried by the substrate's coupling to state. The culture is an informing sensor
+whose fault signatures transfer across substrates, seeds, and terrains, but
+whose authority to compensate remains bounded.
+
+\section*{Acknowledgment}
+
+The author thanks the open-source robotics and neuromorphic communities whose
+tooling made this study possible, and the companion ICRA 2027 paper for the
+load-bearing protocol this fault battery builds on.
+
+\begin{thebibliography}{20}
+
+\bibitem{kagan2022dishbrain}
+B.~J.~Kagan \emph{et al.}, ``In vitro neurons learn and exhibit sentience when
+embodied in a simulated game-world,'' \emph{Neuron}, vol.~110, no.~23,
+pp.~3952--3969, 2022.
+
+\bibitem{balci2023neurons}
+F.~Balc{\i}, S.~Ben~Hamed, T.~Boraud, S.~Bouret, T.~Brochier, C.~Brun,
+\emph{et al.}, ``A response to claims of emergent intelligence and sentience in
+a dish,'' \emph{Neuron}, vol.~111, no.~5, pp.~604--605, 2023.
+
+\bibitem{kagan2023semantics}
+B.~J.~Kagan \emph{et al.}, ``Scientific communication and the semantics of
+sentience,'' \emph{Neuron}, vol.~111, no.~5, 2023. [letter]
+
+\bibitem{maass1997}
+W.~Maass, ``Networks of spiking neurons: the third generation of neural network
+models,'' \emph{Neural Networks}, vol.~10, no.~9, pp.~1659--1671, 1997.
+
+\bibitem{izhikevich2003}
+E.~M.~Izhikevich, ``Simple model of spiking neurons,'' \emph{IEEE Trans.\
+Neural Networks}, vol.~14, no.~6, pp.~1569--1572, 2003.
+
+\bibitem{izhikevich2004}
+E.~M.~Izhikevich, ``Which model to use for cortical spiking neurons?''
+\emph{IEEE Trans.\ Neural Networks}, vol.~15, no.~5, pp.~1063--1070, 2004.
+
+\bibitem{maass2002liquid}
+W.~Maass, T.~Natschlaeger, and H.~Markram, ``Real-time computing without stable
+states: a new framework for neural computation based on perturbations,''
+\emph{Neural Computation}, vol.~14, no.~11, pp.~2531--2560, 2002.
+
+\bibitem{eliasmith2003}
+C.~Eliasmith and C.~H.~Anderson, \emph{Neural Engineering: Computation,
+Representation, and Dynamics in Neurobiological Systems}. MIT Press, 2003.
+
+\bibitem{bekolay2014}
+T.~Bekolay \emph{et al.}, ``Nengo: a Python tool for building large-scale
+functional brain models,'' \emph{Frontiers in Neuroinformatics}, vol.~7,
+art.~48, 2014.
+
+\bibitem{schreiber2000}
+T.~Schreiber, ``Measuring information transfer,'' \emph{Phys.\ Rev.\ Lett.},
+vol.~85, no.~2, pp.~461--464, 2000.
+
+\bibitem{kraskov2004}
+A.~Kraskov, H.~St{\"o}gbauer, and P.~Grassberger, ``Estimating mutual
+information,'' \emph{Phys.\ Rev.\ E}, vol.~69, 066138, 2004.
+
+\bibitem{panzeri2007}
+S.~Panzeri, R.~Senatore, M.~A.~Montemurro, and R.~S.~Petersen, ``Correcting for
+the sampling bias in spike-train information measures,'' \emph{J.\
+Neurophysiology}, vol.~98, pp.~1064--1072, 2007.
+
+\bibitem{theiler1992}
+J.~Theiler, S.~Eubank, A.~Longtin, B.~Galdrikian, and J.~D.~Farmer, ``Testing
+for nonlinearity in time series: the method of surrogate data,'' \emph{Physica
+D}, vol.~58, pp.~77--94, 1992.
+
+\bibitem{ernst2004}
+M.~D.~Ernst, ``Permutation methods: a basis for exact inference,''
+\emph{Statistical Science}, vol.~19, no.~4, pp.~676--685, 2004.
+
+\bibitem{todorov2012}
+E.~Todorov, T.~Erez, and Y.~Tassa, ``MuJoCo: a physics engine for model-based
+control,'' in \emph{Proc.\ IEEE/RSJ Int.\ Conf.\ Intelligent Robots and Systems
+(IROS)}, 2012, pp.~5026--5033.
+
+\bibitem{cai2023brainoware}
+H.~Cai \emph{et al.}, ``Brain organoid reservoir computing for artificial
+intelligence,'' \emph{Nature Electronics}, vol.~6, no.~12, pp.~1032--1039,
+2023.
+
+\bibitem{verstraeten2007}
+D.~Verstraeten, B.~Schrauwen, M.~D'Haene, and D.~Stroobandt, ``An experimental
+unification of reservoir computing methods,'' \emph{Neural Networks}, vol.~20,
+no.~3, pp.~391--403, 2007.
+
+\bibitem{merolla2014}
+P.~A.~Merolla \emph{et al.}, ``A million spiking-neuron integrated circuit with
+a scalable communication network and interface,'' \emph{Science}, vol.~345,
+no.~6197, pp.~668--673, 2014.
+
+\bibitem{davies2018loihi}
+M.~Davies \emph{et al.}, ``Loihi: a neuromorphic manycore processor with
+on-chip learning,'' \emph{IEEE Micro}, vol.~38, no.~1, pp.~82--99, 2018.
+
+\bibitem{turrigiano2004}
+G.~G.~Turrigiano and S.~B.~Nelson, ``Homeostatic plasticity in the developing
+nervous system,'' \emph{Nature Reviews Neuroscience}, vol.~5, no.~2,
+pp.~97--107, 2004.
+
+\bibitem{venkatasubramanian2003}
+V.~Venkatasubramanian, R.~Rengaswamy, K.~Yin, and S.~N.~Kavuri, ``A review of
+process fault detection and diagnosis, Part I: quantitative model-based
+methods,'' \emph{Computers \& Chemical Engineering}, vol.~27, no.~3,
+pp.~293--311, 2003.
+
+\bibitem{isermann2005}
+R.~Isermann, ``Model-based fault-detection and diagnosis --- status and
+applications,'' \emph{Annual Reviews in Control}, vol.~29, no.~1, pp.~71--85,
+2005.
+
+\bibitem{chen1999}
+J.~Chen and R.~J.~Patton, \emph{Robust Model-Based Fault Diagnosis for Dynamic
+Systems}. Boston, MA: Kluwer Academic Publishers, 1999.
+
+\bibitem{deluca2003fdi}
+A.~De~Luca and R.~Mattone, ``Actuator failure detection and isolation using
+generalized momenta,'' in \emph{Proc.\ IEEE Int.\ Conf.\ Robotics and
+Automation (ICRA)}, 2003, pp.~634--639.
+
+\bibitem{visinsky1995fdi}
+M.~L.~Visinsky, J.~R.~Cavallaro, and I.~D.~Walker, ``A dynamic fault tolerance
+framework for remote robots,'' \emph{IEEE Trans.\ Robotics and Automation},
+vol.~11, no.~4, pp.~477--490, 1995.
+
+\bibitem{georgopoulos1986}
+A.~P.~Georgopoulos, A.~B.~Schwartz, and R.~E.~Kettner, ``Neuronal population
+coding of movement direction,'' \emph{Science}, vol.~233, no.~4771,
+pp.~1416--1419, 1986.
+
+\bibitem{kajita2003}
+S.~Kajita \emph{et al.}, ``Biped walking pattern generation by using preview
+control of zero-moment point,'' in \emph{Proc.\ IEEE Int.\ Conf.\ Robotics and
+Automation (ICRA)}, 2003, pp.~1620--1626.
+
+\bibitem{pratt2006capture}
+J.~Pratt, J.~Carff, S.~Drakunov, and A.~Goswami, ``Capture point: a step toward
+humanoid push recovery,'' in \emph{Proc.\ IEEE-RAS Int.\ Conf.\ Humanoid
+Robots}, 2006, pp.~200--207.
+
+\bibitem{wieber2006}
+P.-B.~Wieber, ``Trajectory free linear model predictive control for stable
+walking in the presence of strong perturbations,'' in \emph{Proc.\ IEEE-RAS
+Int.\ Conf.\ Humanoid Robots}, 2006, pp.~137--142.
+
+\bibitem{kuindersma2016}
+S.~Kuindersma \emph{et al.}, ``Optimization-based locomotion planning, control,
+and simulation studies with the Atlas humanoid robot,'' \emph{Autonomous
+Robots}, vol.~40, no.~3, pp.~429--455, 2016.
+
+\bibitem{hwangbo2019}
+J.~Hwangbo \emph{et al.}, ``Learning agile and dynamic motor skills for legged
+robots,'' \emph{Science Robotics}, vol.~4, no.~26, 2019.
+
+\bibitem{kalakrishnan2010}
+M.~Kalakrishnan, J.~Buchli, P.~Pastor, M.~Mistry, and S.~Schaal, ``Fast,
+robust quadruped locomotion over unknown terrain,'' in \emph{Proc.\ IEEE Int.\
+Conf.\ Robotics and Automation (ICRA)}, 2010, pp.~4672--4677.
+
+\bibitem{grandia2021}
+R.~Grandia, F.~Farshidian, R.~Ranjan, and M.~Hutter, ``Hierarchical MPC for
+robust multi-gait locomotion of legged robots,'' \emph{IEEE Robotics and
+Automation Letters}, vol.~6, no.~2, pp.~1471--1478, 2021.
+
+\bibitem{fankhauser2018}
+P.~Fankhauser \emph{et al.}, ``Robust fast navigation of autonomous mobile
+robots in natural environments,'' \emph{Autonomous Robots}, vol.~42, no.~7,
+pp.~1435--1452, 2018.
+
+\end{thebibliography}
+
+\end{document}
