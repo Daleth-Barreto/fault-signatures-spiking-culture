@@ -4,6 +4,9 @@ __pycache__/
 .venv/
 *.egg-info/
 
+# Third-party assets
+third_party/
+
 # LaTeX build artifacts
 paper/*.aux
 paper/*.log

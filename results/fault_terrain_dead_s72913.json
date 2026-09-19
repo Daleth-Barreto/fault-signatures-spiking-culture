@@ -1,0 +1,362 @@
+[
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": null,
+    "fallen_t": null,
+    "fallen": false
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": null,
+    "fallen_t": null,
+    "fallen": false
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": null,
+    "fallen_t": null,
+    "fallen": false
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.1,
+    "fallen_t": 4.104,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": null,
+    "fallen_t": null,
+    "fallen": false
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -6.32,
+    "fallen_t": 3.25,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.19,
+    "fallen_t": 4.006,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": null,
+    "fallen_t": null,
+    "fallen": false
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -5.5,
+    "fallen_t": 4.078,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.18,
+    "fallen_t": 4.02,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -1.8,
+    "fallen_t": 4.122,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -5.14,
+    "fallen_t": 4.434,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -4.23,
+    "fallen_t": 4.966,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -2.72,
+    "fallen_t": 3.204,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -6.37,
+    "fallen_t": 3.204,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.99,
+    "fallen_t": 3.214,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -2.65,
+    "fallen_t": 3.27,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -6.27,
+    "fallen_t": 3.302,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -4.76,
+    "fallen_t": 4.44,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -1.94,
+    "fallen_t": 3.984,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -5.5,
+    "fallen_t": 4.072,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.04,
+    "fallen_t": 4.164,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -1.84,
+    "fallen_t": 4.082,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -5.45,
+    "fallen_t": 4.124,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.97,
+    "fallen_t": 3.23,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -2.74,
+    "fallen_t": 3.18,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -6.32,
+    "fallen_t": 3.25,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.92,
+    "fallen_t": 3.278,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -2.67,
+    "fallen_t": 3.26,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "izh",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -6.33,
+    "fallen_t": 3.246,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -5.23,
+    "fallen_t": 3.966,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -1.51,
+    "fallen_t": 4.412,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -5.62,
+    "fallen_t": 3.95,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 7,
+    "auc": 0.496,
+    "lead_s": -3.86,
+    "fallen_t": 5.342,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 29,
+    "auc": 0.43,
+    "lead_s": -1.33,
+    "fallen_t": 4.592,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "izh",
+    "seed": 13,
+    "auc": 0.478,
+    "lead_s": -5.22,
+    "fallen_t": 4.352,
+    "fallen": true
+  }
+]

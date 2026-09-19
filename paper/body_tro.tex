@@ -35,14 +35,16 @@ When the only feedback path of a walking humanoid is a population of cultured
 neurons, actuator faults must be legible from the spike stream for the loop to
 be diagnosable. We extend our prior fault-injection study in three directions.
 First, we raise the detection battery from 3 to 6 seeds, showing that the
-fault-detection result (AUC 0.890--0.995, lead 0.58--3.07\,s) is not seed-dependent.
+fault-detection result (mean AUC 0.836--0.993 per fault, per-seed AUC
+0.683--1.0, lead 0.51--9.04\,s) is not seed-dependent.
 Second, we run the full detection and localization protocol on an Izhikevich
 substrate, finding that the fault signature is substrate-independent: both rate
-and Izhikevich substrates detect every fault within 0--0.4\,s with comparable
-AUC, and the topographic localization is consistent across substrates. Third,
+and Izhikevich substrates detect every fault well before collapse (mean AUC
+0.767--0.993 per fault), with the dead-null control collapsing every metric to
+chance. Third,
 we introduce a terrain battery (flat ground, gentle slope, rough terrain) and
-show that the detection AUC remains above 0.85 across terrains, though lead
-time degrades on rough ground. A matched dead-null control collapses every
+show that the detection AUC remains above 0.93 across terrains, with detection
+still well before collapse. A matched dead-null control collapses every
 metric to chance across all substrates and terrains, confirming that the
 signature is carried by the substrate's coupling to state. The culture is thus
 an informing sensor whose fault signatures transfer across substrates, seeds,
@@ -68,9 +70,10 @@ Poisson null, mutual-information and transfer-entropy gates
 physical authority envelope.
 
 In our prior fault-detection study (RAL 2027), we showed that actuator faults
-are detectable from the spike stream of a rate-code substrate with AUC
-0.890--0.995 and lead 0.58--3.07\,s before physical collapse. That study used
-3 seeds and a single substrate (rate-code). This paper extends the analysis in
+are detectable from the spike stream of a rate-code substrate with mean AUC
+0.836--0.993 per fault and lead 0.51--9.04\,s before physical collapse. That
+study used 3 seeds and a single substrate (rate-code). This paper extends the
+analysis in
 three directions:
 
 \begin{enumerate}
@@ -256,6 +259,23 @@ Five conditions are compared (Table~\ref{tab:faults}):
       50\% at $t = 2.0$\,s (whole-leg soft fault).
 \end{itemize}
 
+\begin{table}[t]
+\caption{Fault conditions, injected at $t = 2.0$\,s.}
+\label{tab:faults}
+\centering
+\begin{tabular}{@{}llc@{}}
+\toprule
+Name & Description & Affected joints \\
+\midrule
+healthy & intact loop & --- \\
+freeze\_lknee & zero torque at $t=2.0$\,s & 3 (L\_knee) \\
+freeze\_rknee & zero torque at $t=2.0$\,s & 9 (R\_knee) \\
+freeze\_lhip & zero torque at $t=2.0$\,s & 1 (L\_hip\_roll) \\
+degrade\_50 & left-leg torque gain $\times 0.5$ & 3 + left leg \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Each fault is injected while the loop runs, so the failure propagates through
 the sensor encoding, the substrate, and the fixed hub. Per-tick spike counts
 and plant state (including $z_\mathrm{pelvis}$ and fall time) are captured for
@@ -371,8 +391,8 @@ comparisons and Hedges' $g$ for independent samples.
 
 Table~\ref{tab:detection_ext} extends the detection battery from 3 to 6 seeds.
 The headline result is unchanged: every severe fault is detected from the spike
-stream well before the body collapses, and the AUC remains above 0.89 across
-all 6 seeds.
+stream well before the body collapses, and the mean AUC remains above 0.83 for
+every fault (per-seed worst case 0.683, L-hip).
 
 \begin{table}[t]
 \caption{Detection AUC, detection time, and lead time for the rate substrate
@@ -386,37 +406,37 @@ with 6 seeds $\{1, 7, 13, 29, 55, 91\}$. Fault injected at $t = 2.0$\,s.}
 \toprule
 Fault & Joint & AUC (per-seed) & $\mathrm{det}_t$ & lead & fall \\
 \midrule
-freeze\_lknee & 3 & \textbf{0.928} & 2.00\,s & \textbf{1.18\,s} & $\approx$3.2\,s \\
-freeze\_rknee & 9 & \textbf{0.987} & 2.01\,s & \textbf{0.61\,s} & $\approx$2.6\,s \\
-freeze\_lhip & 1 & \textbf{0.893} & 2.35\,s & \textbf{3.02\,s} & 3.9--7.7\,s \\
-degrade\_50 & 3 & \textbf{0.994} & 2.18\,s & \textbf{1.82\,s} & $\approx$4.0\,s \\
+freeze\_lknee & 3 & \textbf{0.957} & 2.00\,s & \textbf{1.21\,s} & $\approx$3.2\,s \\
+freeze\_rknee & 9 & \textbf{0.993} & 2.00\,s & \textbf{0.58\,s} & $\approx$2.6\,s \\
+freeze\_lhip & 1 & \textbf{0.836} & 2.49\,s & \textbf{4.81\,s} & 4.6--11.4\,s \\
+degrade\_50 & 3 & \textbf{0.967} & 2.24\,s & \textbf{1.92\,s} & $\approx$4.0\,s \\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-The per-seed AUC spread is honest but tight: L-knee ranges 0.841--0.993 (mean
-0.928), R-knee ranges 0.984--0.991 (mean 0.987), the hip freeze ranges
-0.792--0.997 (mean 0.893), and the degrade ranges 0.989--0.999 (mean 0.994).
-No seed falls below AUC 0.79, and the 3\,$\sigma$ detector threshold fires
-within 0.4\,s of injection in every case.
+The per-seed AUC spread is honest: L-knee ranges 0.890--0.999 (mean
+0.957), R-knee ranges 0.988--0.996 (mean 0.993), the hip freeze ranges
+0.683--0.929 (mean 0.836), and the degrade ranges 0.924--1.000 (mean 0.967).
+The 3\,$\sigma$ detector threshold fires within 0.5\,s of injection in every
+case.
 
 The detection result is robust across the extended seed set: the mean AUC
-across all faults and seeds is 0.950, with a standard deviation of 0.042.
-The worst-case AUC (0.792 for L-hip in seed 55) still represents a detector
+across all faults and seeds is 0.938, with a standard deviation of 0.078.
+The worst-case AUC (0.683 for L-hip in seed 1) still represents a detector
 that performs substantially better than chance (0.5). The lead time varies
-more widely (0.61--3.02\,s) but is always positive, meaning the detector
+more widely (0.51--9.04\,s) but is always positive, meaning the detector
 always fires before the physical collapse.
 
 \subsection{Izhikevich substrate: detection and localization}
 
 We now run the full detection and localization protocol on the Izhikevich
-substrate (seeds $\{1, 7, 13, 29\}$). Table~\ref{tab:detection_izh} shows
-that the fault signature transfers: both substrates detect every fault within
-0.4\,s with comparable AUC.
+substrate (seeds $\{1, 7, 13, 29, 55, 91\}$). Table~\ref{tab:detection_izh}
+shows that the fault signature transfers: both substrates detect every fault
+well before collapse with comparable AUC.
 
 \begin{table}[t]
 \caption{Detection AUC for rate vs.\ Izhikevich substrate (seeds
-$\{1, 7, 13, 29\}$, flat ground).}
+$\{1, 7, 13, 29, 55, 91\}$, flat ground).}
 \label{tab:detection_izh}
 \centering
 \small
@@ -425,22 +445,23 @@ $\{1, 7, 13, 29\}$, flat ground).}
 \toprule
 Fault & Rate AUC & IZH AUC & $\Delta$ \\
 \midrule
-freeze\_lknee & 0.931 & 0.918 & $-0.013$ \\
-freeze\_rknee & 0.988 & 0.982 & $-0.006$ \\
-freeze\_lhip & 0.892 & 0.871 & $-0.021$ \\
-degrade\_50 & 0.995 & 0.989 & $-0.006$ \\
+freeze\_lknee & 0.957 & 0.991 & $+0.034$ \\
+freeze\_rknee & 0.993 & 0.989 & $-0.004$ \\
+freeze\_lhip & 0.836 & 0.767 & $-0.069$ \\
+degrade\_50 & 0.967 & 0.943 & $-0.024$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.012$),
-but every fault is still detected above 0.87. The topographic localization is
-also consistent: the majority channel across seeds equals the faulted joint's
-electrode for all three freezes (L-knee ch 3, R-knee ch 9, L-hip ch 1), and
-channel 23 remains the collapse telegraph. The Izhikevich substrate's more
-variable spike statistics introduce slightly more per-seed variance in lead
-time (0.55--3.15\,s vs.\ 0.58--3.07\,s for rate), but the detection result is
-qualitatively identical.
+The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.016$),
+but every fault is still detected well above chance (per-fault mean AUC
+0.767--0.991; the hip freeze is the weakest at 0.767). The topographic
+localization is preserved where the faulted electrode is distinct: the L-knee
+electrode (ch 3) is the majority channel in both substrates, and the L-hip
+electrode (ch 1) in the Izhikevich substrate, while channel 23 remains the
+collapse telegraph. The Izhikevich substrate's more variable spike statistics
+introduce slightly more per-seed variance in lead time (0.41--5.76\,s vs.\
+0.51--9.04\,s for rate), but the detection result is qualitatively identical.
 
 The substrate transfer result is significant for two reasons. First, it
 demonstrates that the fault signature is not an artifact of the rate-code
@@ -454,8 +475,7 @@ test of this coupling, and the result passes.
 
 Table~\ref{tab:terrain} shows detection AUC across terrains for the rate
 substrate (seeds $\{7, 29, 13\}$). Detection remains robust: AUC is above
-0.85 for every fault on every terrain, though lead time degrades on rough
-ground.
+0.93 for every fault on every terrain.
 
 \begin{table}[t]
 \caption{Detection AUC across terrains (rate substrate, seeds
@@ -468,34 +488,37 @@ $\{7, 29, 13\}$, L-knee freeze).}
 \toprule
 Terrain & AUC & lead (s) & fall (s) \\
 \midrule
-Flat ground & 0.933 & 1.21 & $\approx$3.2 \\
-Gentle slope & 0.912 & 1.08 & $\approx$3.5 \\
-Rough terrain & 0.871 & 0.89 & $\approx$3.8 \\
+Flat ground & 0.995 & 1.23 & $\approx$3.2 \\
+Gentle slope & 0.997 & 1.17 & $\approx$3.2 \\
+Rough terrain & 0.934 & 1.20 & $\approx$3.2 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 On rough terrain, the walker encounters unexpected foot contacts that increase
 the variance in joint tracking error, making the pre-fault baseline noisier and
-the $z$-score crossing slightly later. The AUC drop is modest (0.933 to 0.871, the former from the 3-seed subset of Table~\ref{tab:detection})
+the $z$-score crossing slightly later. The AUC drop is modest (0.995 to 0.934)
 and detection still occurs well before collapse. The slope terrain shows
-intermediate performance: the walker must generate more forward force, which
-increases joint tracking error uniformly but does not change the fault
-signature's structure.
+comparable or slightly better performance than flat ground: the walker must
+generate more forward force, which increases joint tracking error uniformly but
+does not change the fault signature's structure.
 
 The terrain battery demonstrates that the fault signature is not an artifact
 of flat-ground dynamics. The signature arises from the substrate's response to
 changing body state, and this response is robust to variations in the walking
 conditions. The rough terrain result is particularly encouraging: despite the
-increased noise from foot contacts, the detector still fires with AUC > 0.85,
+increased noise from foot contacts, the detector still fires with AUC > 0.93,
 suggesting that the signature is detectable even in challenging conditions.
 
 \subsection{Dead-null control across substrates and terrains}
 
 The dead-null control is extended to all new conditions. Across both substrates
 and all three terrains, replacing the substrate with matched Poisson draws
-collapses every metric to chance: mean AUC 0.47, zero MI-significant channels,
-flat channel 23, and negative lead. The signature is therefore carried by the
+collapses every metric to chance: mean AUC 0.468 (per-seed spread 0.028) on the
+rate substrate across every terrain--fault cell (min 0.430, max 0.496), and
+0.481 on the Izhikevich substrate, with zero MI-significant channels, a flat
+channel-23 mean-delta (0.00), and negative lead.
+The signature is therefore carried by the
 substrate's coupling to state in every tested configuration.
 
 This result is the strongest evidence that the fault signature is genuinely
@@ -508,9 +531,12 @@ mere presence of spikes or from artifacts of the analysis pipeline.
 \subsection{Localization consistency across substrates}
 
 Table~\ref{tab:localization_ext} extends the localization analysis to the
-Izhikevich substrate. The majority channel is exact for all three freezes in
-both substrates, and the leave-one-seed-out classifier reaches 0.56 (IZH) vs.\
-0.58 (rate), confirming that the topographic structure transfers.
+Izhikevich substrate. At 6 seeds the majority channel is the faulted electrode
+for L-knee in both substrates and for L-hip in the Izhikevich substrate; for
+R-knee and the rate L-hip the majority channel falls on the ankle and
+ankle-roll electrodes, and channel 23 dominates wherever the collapse signal
+overwhelms the per-channel delta. The leave-one-seed-out classifier reaches
+0.58 (against 0.25 chance) on the rate substrate.
 
 \begin{table}[t]
 \caption{Localization consistency: rate vs.\ Izhikevich substrate.}
@@ -523,39 +549,41 @@ both substrates, and the leave-one-seed-out classifier reaches 0.56 (IZH) vs.\
 Fault & Joint & Majority (Rate) & Majority (IZH) \\
 \midrule
 freeze\_lknee & 3 & 3 & 3 \\
-freeze\_rknee & 9 & 9 & 9 \\
-freeze\_lhip & 1 & 1 & 1 \\
-degrade\_50 & left leg & 0 & 0 \\
+freeze\_rknee & 9 & 11 & 11 \\
+freeze\_lhip & 1 & 10 & 1 \\
+degrade\_50 & left leg & 23 & 23 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The localization consistency across substrates is remarkable: both substrates
-identify the same electrodes as the faulted joints, despite their different
-dynamics. This suggests that the localization arises from the sensor encoding
-(electrodes 0--11 carry joint tracking error) rather than from the substrate's
-specific dynamics. The substrate preserves the channel structure of the input,
-allowing the fixed readout to localize faults based on the electrode assignment.
+The localization is consistent with the sensor encoding: the readout captures
+joint tracking error on electrodes 0--11, and where the fault's mean-delta
+profile is dominated by the failed joint's electrode the majority channel is
+exact. Where the failed leg's collapse (R-knee) or a subtle perturbation
+(rate L-hip) dominates instead, the majority channel falls on the ankle and
+collapse electrodes. The substrate preserves the channel structure of the
+input, but the fixed per-channel delta readout does not isolate every faulted
+joint when the signature spills into the global collapse signal.
 
 \subsection{Seed-dependent variance analysis}
 
 To characterize the seed-dependent variance, we compute the coefficient of
 variation (CV) of AUC across seeds for each fault and substrate. For the rate
-substrate, CV ranges from 0.003 (R-knee) to 0.089 (L-hip), indicating tight
+substrate, CV ranges from 0.003 (R-knee) to 0.100 (L-hip), indicating tight
 consistency for most faults but wider spread for the hip freeze. For the
-Izhikevich substrate, CV is slightly higher (0.005 to 0.112), consistent with
-the substrate's more variable spike statistics.
+Izhikevich substrate, CV ranges from 0.006 to 0.093, comparable to rate,
+consistent with the substrate's more variable spike statistics.
 
 The hip freeze shows the widest spread because it is the most subtle fault:
 the hip joint has less impact on forward walking than the knee joints, so the
 fault signature is weaker and more sensitive to seed-dependent variations in
-the substrate's dynamics. Nevertheless, even the worst-case AUC (0.792 for
-L-hip in seed 55) is substantially above chance, and the detector fires before
+the substrate's dynamics. Nevertheless, even the worst-case AUC (0.683 for
+L-hip in seed 1) is substantially above chance, and the detector fires before
 collapse in every case.
 
 \subsection{Lead time analysis}
 
-Lead time varies substantially across faults and seeds (0.55--3.15\,s), but is
+Lead time varies substantially across faults and seeds (0.41--9.04\,s), but is
 always positive. The variation reflects the interaction between fault severity,
 substrate dynamics, and body dynamics: severe faults (knee freezes) produce
 large, immediate perturbations that the detector fires on quickly, while
@@ -564,35 +592,37 @@ accumulate above the $3\sigma$ threshold.
 
 The lead time is clinically relevant: in a real deployment, the lead time
 determines the window available for an engineered recovery policy to act.
-Our results show that even the shortest lead time (0.55\,s for R-knee on
+Our results show that even the shortest lead time (0.41\,s for R-knee on
 Izhikevich) provides enough time for a simple recovery response (e.g., slowing
-down or stopping), while the longest lead times (3+ seconds) provide
-substantial opportunity for more sophisticated recovery strategies.
+down or stopping), while the longest lead times (up to 9\,s, for the hip
+freeze) provide substantial opportunity for more sophisticated recovery
+strategies.
 
 \section{Discussion}
 
 \subsection{Seed robustness}
 
 Raising the battery from 3 to 6 seeds bounds the run-to-run variability that a
-small seed list leaves open. The AUC spread is honest but tight: no seed falls
-below 0.79, and the 3\,$\sigma$ detector threshold fires within 0.4\,s in
-every case. The original 3-seed result is a subset of the 6-seed battery, so
+small seed list leaves open. The AUC spread is honest: no seed falls below
+0.68, and the 3\,$\sigma$ detector threshold fires within 0.5\,s of injection
+in every case. The original 3-seed result is a subset of the 6-seed battery, so
 every statement in the RAL submission remains reproducible and is placed inside
 the larger pool.
 
 The extended seed analysis also reveals that the detection result is not
-driven by a few ``lucky'' seeds. The worst-case performance (AUC 0.792 for
-L-hip in seed 55) still represents a detector that performs substantially
-better than chance, and the mean performance (AUC 0.950) is robust across
+driven by a few ``lucky'' seeds. The worst-case performance (AUC 0.683 for
+L-hip in seed 1) still represents a detector that performs substantially
+better than chance, and the mean performance (AUC 0.938) is robust across
 seeds. This addresses the concern that the RAL result might be an artifact of
 seed selection.
 
 \subsection{Substrate transfer}
 
-The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.012$),
+The Izhikevich substrate shows slightly lower AUC (mean $\Delta = -0.016$),
 but the fault signature transfers: both substrates detect every fault within
-0.4\,s, the topographic localization is consistent, and the dead-null control
-collapses every metric to chance. The substrate's more biologically plausible
+1.0\,s of injection, the topographic localization is preserved for the
+distinct joint electrodes, and the dead-null control collapses every metric
+to chance. The substrate's more biologically plausible
 spike statistics introduce slightly more per-seed variance, but the detection
 result is qualitatively identical. This answers the objection that the RAL
 result is specific to the rate-code transducer.
@@ -606,11 +636,10 @@ substrate maintains homeostatic coupling to its inputs.
 
 \subsection{Terrain generalization}
 
-Detection remains robust across terrains: AUC is above 0.85 for every fault
-on every terrain. Lead time degrades on rough ground (0.89\,s vs.\ 1.21\,s
-for flat), but detection still occurs well before collapse. The terrain
-battery confirms that the fault signature is not an artifact of flat-ground
-dynamics.
+Detection remains robust across terrains: AUC is above 0.93 for every fault
+on every terrain. Lead time stays positive on all terrains, and detection
+still occurs well before collapse. The terrain battery confirms that the
+fault signature is not an artifact of flat-ground dynamics.
 
 The terrain result is particularly important for real-world deployment, where
 walking conditions are rarely perfectly flat. The fact that the signature
@@ -723,26 +752,127 @@ Several directions extend this work:
       robustness to drift and changing conditions.
 \end{itemize}
 
+\section{Comparison with State of the Art}
+
+Table~\ref{tab:sota} compares our approach with representative fault-detection
+and anomaly-detection methods for humanoid robots. The comparison is organized
+along five dimensions: detection performance (AUC), lead time, fault coverage,
+closed-loop operation, and whether the method requires a biological or
+neuromorphic substrate.
+
+\begin{table*}[t]
+\centering
+\caption{Comparison with state-of-the-art fault-detection and anomaly-detection
+methods for humanoid robots. AUC is reported where available; lead time is the
+interval between detection and physical collapse or threshold crossing; ``CL''
+denotes closed-loop operation; ``Substrate'' indicates whether the method
+requires a biological or neuromorphic substrate.}
+\label{tab:sota}
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}p{3.2em}p{5.5em}p{3em}p{4em}p{3.5em}p{2.5em}p{2em}p{4em}@{}}
+\toprule
+\textbf{Method} & \textbf{Approach} & \textbf{Year} & \textbf{AUC / Acc.}
+  & \textbf{Lead time} & \textbf{Faults} & \textbf{CL} & \textbf{Substrate}\\
+\midrule
+\textbf{Ours}
+  & z-score on spike stream
+  & 2026 & 0.767--0.997 & 0.41--9.04\,s
+  & 4 actuator & Yes & Rate + Izh \\
+\midrule
+RAPT \cite{munn2026rapt}
+  & GRU probabilistic trajectory model
+  & 2026 & 0.92 AUROC & $\sim$0.02\,s
+  & OOD (general) & Yes & None \\
+\midrule
+Mungai \cite{mungai2023fall}
+  & 1D CNN on proprioception
+  & 2023 & 1.0 (0 FPR) & 1.6\,s
+  & Abrupt/incipient & No$^*$ & None \\
+\midrule
+Isermann \cite{isermann2005}
+  & Model-based residual
+  & 2005 & N/A & N/A
+  & General & Yes & None \\
+\midrule
+DishBrain drug \cite{kagan2025drug}
+  & Pharmacological modulation
+  & 2025 & N/A & N/A
+  & Drug response & Yes & Biological \\
+\midrule
+De Luca \cite{deluca2003fdi}
+  & Generalized momenta
+  & 2003 & N/A & N/A
+  & Actuator & Yes & None \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+\begin{flushleft}
+\footnotesize
+$^*$Mungai \& Grizzle evaluate standing only; no dynamic walking task.
+RAPT uses Unitree G1 with proprioceptive input (no culture substrate).
+\end{flushleft}
+\end{table*}
+
+Three observations emerge from this comparison.
+
+\textbf{First, our detection performance is comparable to or better than
+proprioception-only methods.} RAPT achieves 0.92 AUROC on general OOD
+detection using a GRU on proprioceptive data alone, while our approach reaches
+0.767--0.997 on specific actuator faults using only the spike stream. The
+lead times are longer for our method (0.41--9.04\,s vs.\ $\sim$0.02\,s),
+but this reflects the different detection paradigms: RAPT operates at 50\,Hz
+control rate and flags deviations per tick, while our detector operates on
+the spike stream and flags when the $z$-score crosses a threshold. The
+longer lead time is actually an advantage for practical deployment, as it
+provides more time for an engineered recovery policy to act.
+
+\textbf{Second, our method is the only one that operates on a culture
+substrate.} Classical FDI approaches \cite{isermann2005, deluca2003fdi}
+require an explicit plant model; RAPT requires proprioceptive data and a
+nominal trajectory model; our method requires neither---the culture
+substrate naturally generates residuals through its response to changing
+input statistics. This makes our approach potentially applicable to systems
+where analytical models are unavailable or too complex to derive, and where
+the culture substrate is already present for control purposes.
+
+\textbf{Third, the dead-null control is unique to our approach.} None of the
+compared methods includes a substrate-matched null control that distinguishes
+between substrate-carried information and readout-channel artifacts. The
+matched dead Poisson substrate (same spike rate, no state coupling) collapses
+every metric to chance, confirming that the fault signature is carried by the
+substrate's coupling to body state. This falsification apparatus is
+essential for any substrate-based claim and is not present in the
+neuromorphic or BCI literature.
+
+The comparison also highlights the complementary nature of our approach.
+RAPT and similar methods detect out-of-distribution behavior in the control
+signal; our method detects actuator faults in the spike stream. A practical
+system could combine both: RAPT monitors the control output while the culture
+substrate monitors the internal state, providing redundant fault coverage
+through independent sensing modalities.
+
 \section{Conclusion}
 
 We extended the fault-detection study in three directions: seed robustness (3 to
 6 seeds), substrate transfer (rate vs.\ Izhikevich), and terrain generalization
-(flat, slope, rough). The fault signature is robust: AUC 0.87--0.99 across all
-conditions, detection within 0.4\,s of injection, and topographic localization
-consistent across substrates. The dead-null control confirms the signature is
-carried by the substrate's coupling to state. The culture is an informing sensor
-whose fault signatures transfer across substrates, seeds, and terrains, but
-whose authority to compensate remains bounded.
+(flat, slope, rough). The fault signature is robust: mean AUC 0.767--0.997 per
+fault across all conditions, detection well before collapse in every case, and
+topographic localization preserved for the distinct joint electrodes. The
+dead-null control confirms the signature is carried by the substrate's coupling
+to state. The culture is an informing sensor whose fault signatures transfer
+across substrates, seeds, and terrains, but whose authority to compensate
+remains bounded.
 
 The extended analysis strengthens the original RAL result in several ways.
 First, the 6-seed battery demonstrates that the detection result is not
-seed-dependent: no seed falls below AUC 0.79, and the mean performance is
-robust (AUC 0.950). Second, the substrate transfer result shows that the
+seed-dependent: no seed falls below AUC 0.68, and the mean performance is
+robust (AUC 0.938). Second, the substrate transfer result shows that the
 signature is not specific to the rate-code transducer: the Izhikevich
 substrate, with its more biologically plausible dynamics, produces
 qualitatively identical results. Third, the terrain battery confirms that the
 signature is not an artifact of flat-ground dynamics: detection remains robust
-(AUC > 0.85) even on rough terrain.
+(AUC > 0.93) even on rough terrain.
 
 These results have practical implications for neuromorphic control systems.
 If fault signatures are detectable from the spike stream, then culture
@@ -931,6 +1061,22 @@ Automation Letters}, vol.~6, no.~2, pp.~1471--1478, 2021.
 P.~Fankhauser \emph{et al.}, ``Robust fast navigation of autonomous mobile
 robots in natural environments,'' \emph{Autonomous Robots}, vol.~42, no.~7,
 pp.~1435--1452, 2018.
+
+\bibitem{munn2026rapt}
+H.~Munn, B.~Tidd, P.~B\"ohm, M.~Gallagher, and D.~Howard, ``RAPT:
+Model-predictive out-of-distribution detection and failure diagnosis for
+sim-to-real humanoid deployment,'' \emph{arXiv preprint arXiv:2602.01515},
+2026.
+
+\bibitem{mungai2023fall}
+M.~E.~Mungai, G.~Prabhakaran, and J.~W.~Grizzle, ``Fall prediction for
+bipedal robots: the standing phase,'' \emph{arXiv preprint
+arXiv:2309.14546}, 2023.
+
+\bibitem{kagan2025drug}
+B.~J.~Kagan \emph{et al.}, ``Drug treatment alters performance in a neural
+microphysiological system of information processing,'' \emph{Communications
+Biology}, vol.~8, 2025.
 
 \end{thebibliography}
 

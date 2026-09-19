@@ -1,0 +1,182 @@
+[
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.997,
+    "lead_s": 1.26,
+    "fallen_t": 3.264,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.991,
+    "lead_s": 1.2,
+    "fallen_t": 3.202,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.998,
+    "lead_s": 1.23,
+    "fallen_t": 3.23,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 1.0,
+    "lead_s": 2.44,
+    "fallen_t": 4.466,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.964,
+    "lead_s": 1.82,
+    "fallen_t": 3.942,
+    "fallen": true
+  },
+  {
+    "terrain": "flat",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.99,
+    "lead_s": 3.4,
+    "fallen_t": 5.472,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 1.0,
+    "lead_s": 1.21,
+    "fallen_t": 3.214,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.994,
+    "lead_s": 1.19,
+    "fallen_t": 3.186,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.996,
+    "lead_s": 1.12,
+    "fallen_t": 3.116,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.994,
+    "lead_s": 1.9,
+    "fallen_t": 3.95,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 1.0,
+    "lead_s": 1.72,
+    "fallen_t": 3.92,
+    "fallen": true
+  },
+  {
+    "terrain": "ramp",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.998,
+    "lead_s": 1.53,
+    "fallen_t": 3.954,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.894,
+    "lead_s": 1.22,
+    "fallen_t": 3.216,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 0.995,
+    "lead_s": 1.23,
+    "fallen_t": 3.234,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "freeze_lknee",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.913,
+    "lead_s": 1.16,
+    "fallen_t": 3.16,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 7,
+    "auc": 0.987,
+    "lead_s": 2.81,
+    "fallen_t": 4.862,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 29,
+    "auc": 1.0,
+    "lead_s": 3.11,
+    "fallen_t": 5.214,
+    "fallen": true
+  },
+  {
+    "terrain": "rough",
+    "fault": "degrade_50",
+    "substrate": "rate",
+    "seed": 13,
+    "auc": 0.823,
+    "lead_s": 2.2,
+    "fallen_t": 4.254,
+    "fallen": true
+  }
+]

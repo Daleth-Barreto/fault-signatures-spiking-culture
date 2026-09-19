@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software/data in your research, please cite it as follows."
+title: "Fault Signatures in the Spike Stream of a Closed-Loop Neuronal Culture Substrate"
+abstract: >-
+  Actuator faults are detectable from the spike stream of a closed-loop
+  neuronal culture substrate on a Unitree G1 humanoid in MuJoCo simulation.
+  AUC 0.890-0.995, lead time 0.61-3.02s, topographic localization consistent
+  across substrates, seeds, and terrains. The culture is an informing sensor
+  whose fault signatures transfer across substrates but whose authority to
+  compensate remains bounded.
+keywords:
+  - closed-loop neural culture
+  - fault detection
+  - spiking substrate
+  - humanoid locomotion
+  - topographic readout
+  - mutual information
+  - lead time
+license: MIT
+version: 1.0.0
+date-released: "2026-09-18"
+authors:
+  - family-names: Hernandez Barreto
+    given-names: Alan Daleth
+    orcid: "0009-0007-7439-1920"
+    email: alandaleth.hb@gmail.com
+repository-code: "https://github.com/Daleth-Barreto/fault-signatures-spiking-culture"

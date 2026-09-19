@@ -1,0 +1,265 @@
+{
+  "seeds": [
+    1,
+    7,
+    13,
+    29,
+    55,
+    91
+  ],
+  "failures": [
+    "healthy",
+    "freeze_lknee",
+    "freeze_rknee",
+    "freeze_lhip",
+    "degrade_50"
+  ],
+  "t_fault": 2.0,
+  "tps": 40,
+  "mode": "poisson",
+  "substrate": "izh",
+  "tag": "6seed",
+  "runs": [
+    {
+      "failure": "healthy",
+      "joint": null,
+      "label": "healthy",
+      "seed": 1,
+      "fallen_t": null,
+      "npz": "fault_dead_healthy_6seed_izh_s1.npz"
+    },
+    {
+      "failure": "healthy",
+      "joint": null,
+      "label": "healthy",
+      "seed": 7,
+      "fallen_t": null,
+      "npz": "fault_dead_healthy_6seed_izh_s7.npz"
+    },
+    {
+      "failure": "healthy",
+      "joint": null,
+      "label": "healthy",
+      "seed": 13,
+      "fallen_t": null,
+      "npz": "fault_dead_healthy_6seed_izh_s13.npz"
+    },
+    {
+      "failure": "healthy",
+      "joint": null,
+      "label": "healthy",
+      "seed": 29,
+      "fallen_t": null,
+      "npz": "fault_dead_healthy_6seed_izh_s29.npz"
+    },
+    {
+      "failure": "healthy",
+      "joint": null,
+      "label": "healthy",
+      "seed": 55,
+      "fallen_t": null,
+      "npz": "fault_dead_healthy_6seed_izh_s55.npz"
+    },
+    {
+      "failure": "healthy",
+      "joint": null,
+      "label": "healthy",
+      "seed": 91,
+      "fallen_t": null,
+      "npz": "fault_dead_healthy_6seed_izh_s91.npz"
+    },
+    {
+      "failure": "freeze_lknee",
+      "joint": 3,
+      "label": "left_knee",
+      "seed": 1,
+      "fallen_t": 3.256,
+      "npz": "fault_dead_freeze_lknee_6seed_izh_s1.npz"
+    },
+    {
+      "failure": "freeze_lknee",
+      "joint": 3,
+      "label": "left_knee",
+      "seed": 7,
+      "fallen_t": 3.31,
+      "npz": "fault_dead_freeze_lknee_6seed_izh_s7.npz"
+    },
+    {
+      "failure": "freeze_lknee",
+      "joint": 3,
+      "label": "left_knee",
+      "seed": 13,
+      "fallen_t": 3.238,
+      "npz": "fault_dead_freeze_lknee_6seed_izh_s13.npz"
+    },
+    {
+      "failure": "freeze_lknee",
+      "joint": 3,
+      "label": "left_knee",
+      "seed": 29,
+      "fallen_t": 3.25,
+      "npz": "fault_dead_freeze_lknee_6seed_izh_s29.npz"
+    },
+    {
+      "failure": "freeze_lknee",
+      "joint": 3,
+      "label": "left_knee",
+      "seed": 55,
+      "fallen_t": 3.338,
+      "npz": "fault_dead_freeze_lknee_6seed_izh_s55.npz"
+    },
+    {
+      "failure": "freeze_lknee",
+      "joint": 3,
+      "label": "left_knee",
+      "seed": 91,
+      "fallen_t": 3.26,
+      "npz": "fault_dead_freeze_lknee_6seed_izh_s91.npz"
+    },
+    {
+      "failure": "freeze_rknee",
+      "joint": 9,
+      "label": "right_knee",
+      "seed": 1,
+      "fallen_t": 2.616,
+      "npz": "fault_dead_freeze_rknee_6seed_izh_s1.npz"
+    },
+    {
+      "failure": "freeze_rknee",
+      "joint": 9,
+      "label": "right_knee",
+      "seed": 7,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_rknee_6seed_izh_s7.npz"
+    },
+    {
+      "failure": "freeze_rknee",
+      "joint": 9,
+      "label": "right_knee",
+      "seed": 13,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_rknee_6seed_izh_s13.npz"
+    },
+    {
+      "failure": "freeze_rknee",
+      "joint": 9,
+      "label": "right_knee",
+      "seed": 29,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_rknee_6seed_izh_s29.npz"
+    },
+    {
+      "failure": "freeze_rknee",
+      "joint": 9,
+      "label": "right_knee",
+      "seed": 55,
+      "fallen_t": 3.248,
+      "npz": "fault_dead_freeze_rknee_6seed_izh_s55.npz"
+    },
+    {
+      "failure": "freeze_rknee",
+      "joint": 9,
+      "label": "right_knee",
+      "seed": 91,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_rknee_6seed_izh_s91.npz"
+    },
+    {
+      "failure": "freeze_lhip",
+      "joint": 1,
+      "label": "left_hip_roll",
+      "seed": 1,
+      "fallen_t": 5.404,
+      "npz": "fault_dead_freeze_lhip_6seed_izh_s1.npz"
+    },
+    {
+      "failure": "freeze_lhip",
+      "joint": 1,
+      "label": "left_hip_roll",
+      "seed": 7,
+      "fallen_t": 3.236,
+      "npz": "fault_dead_freeze_lhip_6seed_izh_s7.npz"
+    },
+    {
+      "failure": "freeze_lhip",
+      "joint": 1,
+      "label": "left_hip_roll",
+      "seed": 13,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_lhip_6seed_izh_s13.npz"
+    },
+    {
+      "failure": "freeze_lhip",
+      "joint": 1,
+      "label": "left_hip_roll",
+      "seed": 29,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_lhip_6seed_izh_s29.npz"
+    },
+    {
+      "failure": "freeze_lhip",
+      "joint": 1,
+      "label": "left_hip_roll",
+      "seed": 55,
+      "fallen_t": null,
+      "npz": "fault_dead_freeze_lhip_6seed_izh_s55.npz"
+    },
+    {
+      "failure": "freeze_lhip",
+      "joint": 1,
+      "label": "left_hip_roll",
+      "seed": 91,
+      "fallen_t": 3.304,
+      "npz": "fault_dead_freeze_lhip_6seed_izh_s91.npz"
+    },
+    {
+      "failure": "degrade_50",
+      "joint": 3,
+      "label": "left_leg",
+      "seed": 1,
+      "fallen_t": 4.118,
+      "npz": "fault_dead_degrade_50_6seed_izh_s1.npz"
+    },
+    {
+      "failure": "degrade_50",
+      "joint": 3,
+      "label": "left_leg",
+      "seed": 7,
+      "fallen_t": null,
+      "npz": "fault_dead_degrade_50_6seed_izh_s7.npz"
+    },
+    {
+      "failure": "degrade_50",
+      "joint": 3,
+      "label": "left_leg",
+      "seed": 13,
+      "fallen_t": 2.634,
+      "npz": "fault_dead_degrade_50_6seed_izh_s13.npz"
+    },
+    {
+      "failure": "degrade_50",
+      "joint": 3,
+      "label": "left_leg",
+      "seed": 29,
+      "fallen_t": 4.358,
+      "npz": "fault_dead_degrade_50_6seed_izh_s29.npz"
+    },
+    {
+      "failure": "degrade_50",
+      "joint": 3,
+      "label": "left_leg",
+      "seed": 55,
+      "fallen_t": 4.194,
+      "npz": "fault_dead_degrade_50_6seed_izh_s55.npz"
+    },
+    {
+      "failure": "degrade_50",
+      "joint": 3,
+      "label": "left_leg",
+      "seed": 91,
+      "fallen_t": 4.1,
+      "npz": "fault_dead_degrade_50_6seed_izh_s91.npz"
+    }
+  ],
+  "wall_sec": 916.1
+}
